@@ -203,8 +203,11 @@ def register_s3_tools(mcp: FastMCP) -> None:
             }
 
         response = client.get_object(Bucket=bucket, Key=key)
-        with response['Body'] as body:
+        body = response['Body']
+        try:
             content = body.read().decode('utf-8')
+        finally:
+            body.close()
 
         return {
             'uri': f's3://{bucket}/{key}',

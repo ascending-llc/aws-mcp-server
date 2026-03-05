@@ -21,7 +21,7 @@ from awslabs.aws_s3_mcp_server.consts import DEFAULT_REGION
 from botocore.client import BaseClient
 from botocore.config import Config
 from botocore.exceptions import ClientError
-from functools import wraps
+from functools import lru_cache, wraps
 from typing import Optional, Tuple
 
 
@@ -29,8 +29,14 @@ def _user_agent_extra() -> str:
     return f'awslabs/mcp/aws-s3-mcp-server/{__version__}'
 
 
+@lru_cache(maxsize=8)
+def _get_cached_s3_client(region: str) -> BaseClient:
+    config = Config(user_agent_extra=_user_agent_extra())
+    return boto3.Session().client('s3', region_name=region, config=config)
+
+
 def get_s3_client(region_name: Optional[str] = None) -> BaseClient:
-    """Create a boto3 S3 client.
+    """Return a cached boto3 S3 client for the given region.
 
     Args:
         region_name: Optional AWS region name. If not provided, uses AWS_DEFAULT_REGION
@@ -42,9 +48,7 @@ def get_s3_client(region_name: Optional[str] = None) -> BaseClient:
     region = (
         region_name or os.getenv('AWS_DEFAULT_REGION') or os.getenv('AWS_REGION') or DEFAULT_REGION
     )
-    config = Config(user_agent_extra=_user_agent_extra())
-    session = boto3.Session()
-    return session.client('s3', region_name=region, config=config)
+    return _get_cached_s3_client(region)
 
 
 def handle_exceptions(func):

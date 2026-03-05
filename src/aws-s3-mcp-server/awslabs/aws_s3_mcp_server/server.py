@@ -55,7 +55,7 @@ mcp = FastMCP(SERVER_NAME, lifespan=_lifespan)
 @mcp.custom_route('/health', methods=['GET'])
 async def health(request: Request) -> JSONResponse:
     """Kubernetes liveness probe endpoint."""
-    return JSONResponse({'status': 'healthy', 'service': 'aws-s3-mcp'})
+    return JSONResponse({'status': 'healthy', 'service': SERVER_NAME})
 
 
 register_tools(mcp)
