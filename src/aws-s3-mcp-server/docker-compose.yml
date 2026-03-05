@@ -1,0 +1,23 @@
+services:
+  aws-s3-mcp:
+    build: .
+    container_name: aws-s3-mcp
+    env_file:
+      - .env
+    ports:
+      - "${MCP_PORT:-3334}:${MCP_PORT:-3334}"
+    environment:
+      - MCP_PORT=${MCP_PORT:-3334}
+      - AWS_REGION=${AWS_REGION:-us-east-1}
+      - AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION:-us-east-1}
+
+      - FASTMCP_LOG_LEVEL=${FASTMCP_LOG_LEVEL:-INFO}
+    volumes:
+      - ~/.aws:/app/.aws:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "sh", "-c", "curl -sf http://localhost:${MCP_PORT:-3334}/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 15s
+      retries: 3
