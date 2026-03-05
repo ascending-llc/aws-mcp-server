@@ -65,12 +65,9 @@ RUN apk update && \
     adduser -S app -G app -h /app
 
 COPY --from=uv --chown=app:app /app /app
-COPY --chown=app:app docker-healthcheck.sh /usr/local/bin/docker-healthcheck.sh
-RUN chmod +x /usr/local/bin/docker-healthcheck.sh
-
 USER app
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=15s --retries=3 \
-    CMD ["/usr/local/bin/docker-healthcheck.sh"]
+    CMD curl -sf http://localhost:${MCP_PORT}/health || exit 1
 
 CMD ["awslabs.aws-s3-mcp-server"]
