@@ -16,15 +16,14 @@
 
 import asyncio
 import os
-from contextlib import asynccontextmanager
-from typing import AsyncIterator
-
 from awslabs.aws_s3_mcp_server.consts import DEFAULT_PORT, HEARTBEAT_INTERVAL, SERVER_NAME
 from awslabs.aws_s3_mcp_server.tools import register_tools
+from contextlib import asynccontextmanager
 from fastmcp import FastMCP
 from loguru import logger
 from starlette.requests import Request
 from starlette.responses import JSONResponse
+from typing import AsyncIterator
 
 
 @asynccontextmanager

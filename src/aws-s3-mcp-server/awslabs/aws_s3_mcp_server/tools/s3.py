@@ -20,6 +20,7 @@ from loguru import logger
 from pydantic import Field
 from typing import Optional
 
+
 # Maximum object size returned by get-object to protect LLM context window
 _GET_OBJECT_SIZE_LIMIT = 256 * 1024  # 256 KB
 
@@ -31,9 +32,20 @@ def register_s3_tools(mcp: FastMCP) -> None:
     @handle_exceptions
     async def list_objects(
         bucket: str = Field(..., description='Name of the S3 bucket to list objects from.'),
-        prefix: str = Field('', description='Key prefix to filter objects. Defaults to empty string (list all objects).'),
-        max_keys: int = Field(1000, description='Maximum number of objects to return. Defaults to 1000.', ge=1, le=1000),
-        region: Optional[str] = Field(None, description='AWS region of the bucket. Defaults to AWS_DEFAULT_REGION env var or us-east-1.'),
+        prefix: str = Field(
+            '',
+            description='Key prefix to filter objects. Defaults to empty string (list all objects).',
+        ),
+        max_keys: int = Field(
+            1000,
+            description='Maximum number of objects to return. Defaults to 1000.',
+            ge=1,
+            le=1000,
+        ),
+        region: Optional[str] = Field(
+            None,
+            description='AWS region of the bucket. Defaults to AWS_DEFAULT_REGION env var or us-east-1.',
+        ),
     ) -> dict:
         """List objects in an S3 bucket.
 
@@ -69,7 +81,10 @@ def register_s3_tools(mcp: FastMCP) -> None:
     @mcp.tool(name='list-buckets')
     @handle_exceptions
     async def list_buckets(
-        region: Optional[str] = Field(None, description='AWS region for the API call. Defaults to AWS_DEFAULT_REGION env var or us-east-1.'),
+        region: Optional[str] = Field(
+            None,
+            description='AWS region for the API call. Defaults to AWS_DEFAULT_REGION env var or us-east-1.',
+        ),
     ) -> dict:
         """List all S3 buckets in the AWS account.
 
@@ -103,7 +118,10 @@ def register_s3_tools(mcp: FastMCP) -> None:
     async def head_object(
         bucket: str = Field(..., description='Name of the S3 bucket.'),
         key: str = Field(..., description='S3 key of the object to inspect.'),
-        region: Optional[str] = Field(None, description='AWS region of the bucket. Defaults to AWS_DEFAULT_REGION env var or us-east-1.'),
+        region: Optional[str] = Field(
+            None,
+            description='AWS region of the bucket. Defaults to AWS_DEFAULT_REGION env var or us-east-1.',
+        ),
     ) -> dict:
         """Get metadata for an S3 object without fetching its content.
 
@@ -137,7 +155,10 @@ def register_s3_tools(mcp: FastMCP) -> None:
     async def get_object(
         bucket: str = Field(..., description='Name of the S3 bucket.'),
         key: str = Field(..., description='S3 key of the object to read.'),
-        region: Optional[str] = Field(None, description='AWS region of the bucket. Defaults to AWS_DEFAULT_REGION env var or us-east-1.'),
+        region: Optional[str] = Field(
+            None,
+            description='AWS region of the bucket. Defaults to AWS_DEFAULT_REGION env var or us-east-1.',
+        ),
     ) -> dict:
         """Read the text or JSON content of a small S3 object.
 
@@ -198,8 +219,16 @@ def register_s3_tools(mcp: FastMCP) -> None:
     async def create_presigned_url(
         bucket: str = Field(..., description='Name of the S3 bucket.'),
         key: str = Field(..., description='S3 key of the object.'),
-        expires_in: int = Field(3600, description='URL expiry time in seconds. Defaults to 1 hour. Maximum 7 days (604800).', ge=1, le=604800),
-        region: Optional[str] = Field(None, description='AWS region of the bucket. Defaults to AWS_DEFAULT_REGION env var or us-east-1.'),
+        expires_in: int = Field(
+            3600,
+            description='URL expiry time in seconds. Defaults to 1 hour. Maximum 7 days (604800).',
+            ge=1,
+            le=604800,
+        ),
+        region: Optional[str] = Field(
+            None,
+            description='AWS region of the bucket. Defaults to AWS_DEFAULT_REGION env var or us-east-1.',
+        ),
     ) -> dict:
         """Generate a presigned URL for temporary read access to an S3 object.
 
@@ -212,7 +241,9 @@ def register_s3_tools(mcp: FastMCP) -> None:
               - uri: S3 URI of the object
               - expires_in: expiry duration in seconds
         """
-        logger.debug(f'create-presigned-url: bucket={bucket!r} key={key!r} expires_in={expires_in}')
+        logger.debug(
+            f'create-presigned-url: bucket={bucket!r} key={key!r} expires_in={expires_in}'
+        )
         client = get_s3_client(region)
         url = client.generate_presigned_url(
             'get_object',
@@ -231,7 +262,10 @@ def register_s3_tools(mcp: FastMCP) -> None:
     async def put_object(
         bucket: str = Field(..., description='Name of the S3 bucket to write the object to.'),
         key: str = Field(..., description='S3 key (path) for the object.'),
-        content: str = Field(..., description='String content to write. Must be text or JSON — binary content is not supported.'),
+        content: str = Field(
+            ...,
+            description='String content to write. Must be text or JSON — binary content is not supported.',
+        ),
         content_type: str = Field(
             'application/json',
             description=(
@@ -239,7 +273,10 @@ def register_s3_tools(mcp: FastMCP) -> None:
                 '(e.g. "text/plain", "text/csv"). Binary content types are rejected.'
             ),
         ),
-        region: Optional[str] = Field(None, description='AWS region of the bucket. Defaults to AWS_DEFAULT_REGION env var or us-east-1.'),
+        region: Optional[str] = Field(
+            None,
+            description='AWS region of the bucket. Defaults to AWS_DEFAULT_REGION env var or us-east-1.',
+        ),
     ) -> dict:
         """Write string or JSON content to an S3 object.
 

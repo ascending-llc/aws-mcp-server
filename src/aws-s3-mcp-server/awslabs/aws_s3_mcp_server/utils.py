@@ -39,7 +39,9 @@ def get_s3_client(region_name: Optional[str] = None) -> BaseClient:
     Returns:
         Configured boto3 S3 client.
     """
-    region = region_name or os.getenv('AWS_DEFAULT_REGION') or os.getenv('AWS_REGION') or DEFAULT_REGION
+    region = (
+        region_name or os.getenv('AWS_DEFAULT_REGION') or os.getenv('AWS_REGION') or DEFAULT_REGION
+    )
     config = Config(user_agent_extra=_user_agent_extra())
     session = boto3.Session()
     return session.client('s3', region_name=region, config=config)
