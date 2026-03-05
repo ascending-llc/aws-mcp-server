@@ -107,5 +107,5 @@ source = ["awslabs"]
 [tool.coverage.report]
 exclude_also = [
     'pragma: no cover',
-    'if __name__ == .__main__.:\n    main()',
+    'if __name__ == "__main__":\n    main\(\)',
 ]

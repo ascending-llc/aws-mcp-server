@@ -6,8 +6,12 @@ An [AWS Labs MCP](https://awslabs.github.io/mcp/) server that exposes lightweigh
 
 | Tool | Description |
 |------|-------------|
+| `list-buckets` | List S3 buckets visible to the configured AWS credentials. Returns bucket name and creation date only. |
 | `list-objects` | List objects in an S3 bucket — returns metadata only (key, size, last_modified, etag). Designed for file discovery without consuming LLM context. |
+| `head-object` | Retrieve metadata for a single S3 object (size, ETag, content type) without downloading the body. Useful for existence checks and validating object properties. |
+| `get-object` | Read small text or JSON objects from S3. Limited to 256 KB and `text/*` / `application/json` content types. Use presigned URLs or AWS SDKs for large or binary objects. |
 | `put-object` | Write string or JSON content to an S3 object. Accepts `application/json` and `text/*` content types only. Binary writes must be performed via boto3 directly. |
+| `create-presigned-url` | Generate a short-lived presigned URL for temporary read access to an S3 object. Expiry is configurable up to 7 days (default 1 hour). |
 
 ## Transport
 

@@ -15,7 +15,7 @@ services:
       - AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN:-}
       - FASTMCP_LOG_LEVEL=${FASTMCP_LOG_LEVEL:-INFO}
     volumes:
-      - ~/.aws:/root/.aws:ro
+      - ~/.aws:/app/.aws:ro
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "sh", "-c", "curl -sf http://localhost:${MCP_PORT:-3334}/health"]
